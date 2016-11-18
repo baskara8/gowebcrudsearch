@@ -1,6 +1,6 @@
-# goweb
+# gowebcrudsearch
 //Bahasa Indonesia<br>
-Download dengan cara "go get github.com/baskara8/goweb" di cli atau command prompt anda
+Download dengan cara "go get github.com/baskara8/gowebcrudsearch" di cli atau command prompt anda
 
 Membuat aplikasi CRUD Golang, tetapi tidak hanya proses Create, Read, Add dan Delete saja tetapi juga dengan pencarian data
 ditambah bonus :
@@ -20,9 +20,9 @@ github.com/kataras/go-sessions
 <hr>
 
 //English<br>
-Download with a command "go get github.com/baskara8/goweb" in cli or command prompt
+Download with a command "go get github.com/baskara8/gowebcrudsearch" in cli or command prompt
 
-Golang CRUD application, but not only the Create, Read, Add and Delete but also with data search
+Golang CRUD application, but not only the Create, Read, Add and Delete but also with data Search
 plus a bonus:
 <ol>
 <li> Upoad File </li>
