@@ -1,0 +1,19 @@
+{{define "user"}}
+	{{template "header"}}
+	{{ if eq .suserid ""}}
+		<table>
+			<tr>
+				<td>Anda belum login</td>
+				<td><a href="login">Login</a> atau daftar <a href="/">disini</a></td>
+			</tr>
+		</table>
+	{{else}}
+	<table>
+			<tr>
+				<td>Ini session user anda {{.suserid}}</td>
+				<td><a href="logout">Logout</a></td>
+			</tr>
+		</table>
+	{{end}}
+	{{template "footer"}}
+{{end}}

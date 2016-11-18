@@ -1,0 +1,17 @@
+{{ define "login" }}
+{{template "header"}}
+{{template "menu"}}
+	<p><font color="red">{{.err}}</font></p>
+	<form method="POST" action="dologin">
+	<table border="1">
+		<tr>
+			<th>Email</th><td><input type="text" name="email" required="required"></td>
+		</tr>
+		<tr>
+			<th>Password</th><td><input type="password" name="password" required="required"></td>
+		</tr>
+	</table>
+	<input type="submit" value="Login">
+	</form>
+{{template "footer"}}
+ {{ end }}

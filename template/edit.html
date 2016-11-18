@@ -1,0 +1,30 @@
+{{ define "edit" }}
+{{template "header"}}
+   {{template "menu"}}
+	<form method="POST" action="doedit">
+	<table border="1">
+		<tr>
+			<th>ID</th><td>{{.Userid}}</td>
+		</tr>
+		<tr>
+			<th>Nama</th><td><input type="text" name="username" value="{{.Username}}" required="required"></td>
+		</tr>
+		<tr>
+			<th>Email</th><td><input type="text" name="email" value="{{.Email}}" required="required"></td>
+		</tr>
+		<tr>
+			<th>Password</th><td><input type="password" name="password" required="required"></td>
+		</tr>
+		<tr>
+			<th>Jekel</th>
+			<td>
+			<input type="radio" name="jekel" value="L" {{if eq .Jekel "L"}} checked="checked" {{end}}>Laki-laki 
+			<input type="radio" name="jekel" value="P" {{if eq .Jekel "P"}} checked="checked" {{end}}>Perempuan
+			</td>
+		</tr>
+	</table>
+	<input type="hidden" name="userid" value="{{.Userid}}">
+	<input type="submit" value="Ubah">
+	</form>
+{{template "footer"}}
+ {{ end }}
