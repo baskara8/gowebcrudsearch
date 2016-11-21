@@ -8,6 +8,8 @@ ditambah bonus :
 <li>Upoad File</li>
 <li>Session Login</li>
 <li>Logout</li>
+<li>Download data ke file excel</li>
+<li>Upload data dari file excel</li>
 </ol>
 
 Database menggunakan MySQL/MariaDB<br>
@@ -28,6 +30,8 @@ plus a bonus:
 <li> Upoad File </li>
 <li> Session Login </li>
 <li> Logout </li>
+<li> Download to Excel </li>
+<li> Upload from Excel </li>
 </ol>
 
 Database using MySQL / MariaDB <br>
