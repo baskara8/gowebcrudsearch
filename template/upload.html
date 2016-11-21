@@ -1,0 +1,13 @@
+{{ define "upload" }}
+{{template "header"}}
+   {{template "menu"}}
+	<form method="POST" action="doupload" enctype="multipart/form-data">
+	<table border="0">
+		<tr>
+			<th>Upload data dari Excel</th><td>:<input type="file" name="file"></td>
+		</tr>
+	</table>
+	<input type="submit" value="Upload">
+	</form>
+{{template "footer"}}
+ {{ end }}

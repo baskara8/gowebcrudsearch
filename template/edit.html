@@ -1,7 +1,7 @@
 {{ define "edit" }}
 {{template "header"}}
    {{template "menu"}}
-	<form method="POST" action="doedit">
+	<form method="POST" action="doedit" enctype="multipart/form-data">
 	<table border="1">
 		<tr>
 			<th>ID</th><td>{{.Userid}}</td>
@@ -13,7 +13,8 @@
 			<th>Email</th><td><input type="text" name="email" value="{{.Email}}" required="required"></td>
 		</tr>
 		<tr>
-			<th>Password</th><td><input type="password" name="password" required="required"></td>
+			<th>Password</th><td><input type="password" name="password">
+			<input type="hidden" name="oldpassword" value="{{.Oldpass}}"></td>
 		</tr>
 		<tr>
 			<th>Jekel</th>
@@ -21,6 +22,9 @@
 			<input type="radio" name="jekel" value="L" {{if eq .Jekel "L"}} checked="checked" {{end}}>Laki-laki 
 			<input type="radio" name="jekel" value="P" {{if eq .Jekel "P"}} checked="checked" {{end}}>Perempuan
 			</td>
+		</tr>
+		<tr>
+			<th>Upload Foto</th><td>: <img src="upload/{{.Foto}}"><br><input type="file" name="file"></td>
 		</tr>
 	</table>
 	<input type="hidden" name="userid" value="{{.Userid}}">

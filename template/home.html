@@ -1,7 +1,7 @@
 {{ define "home" }}
 {{template "header"}}
 {{template "menu"}}
-     <input type="button" value="Halaman User" onClick="location.href='user'">
+     <input type="button" value="Ke Halaman User" onClick="location.href='user'">
 	<form method="POST" action="home" enctype="multipart/form-data">
 	<table>
 		<tr>
@@ -29,9 +29,12 @@
 	</table>
 	</form>
 	<hr>
+	<button onClick="location.href='download'">Download ke Excel</button>
+	<button onClick="location.href='upload'">Upload dari Excel</button>
 	<table border="1">
 		<thead>
 		<tr>
+			<th></th>
 			<th>ID</th>
 			<th>Nama</th>
 			<th>Email</th>
@@ -42,6 +45,7 @@
 		<tbody>
 		 {{ range . }}
 			<tr>
+				<td><img src="/upload/{{ .Foto }}" width="75" height="60"></td>
 				<td>{{ .Userid }}</td>
 				<td>{{ .Username }}</td>
 				<td>{{ .Email }}</td>
