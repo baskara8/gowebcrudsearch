@@ -1,6 +1,12 @@
 {{ define "edit" }}
 {{template "header"}}
    {{template "menu"}}
+   	<script>
+ 	var loadPhoto1 = function(event) {
+    var output = document.getElementById('image1');
+    output.src = URL.createObjectURL(event.target.files[0]);
+	};
+ </script>
 	<form method="POST" action="doedit" enctype="multipart/form-data">
 	<table border="1">
 		<tr>
@@ -24,7 +30,7 @@
 			</td>
 		</tr>
 		<tr>
-			<th>Upload Foto</th><td>: <img src="upload/{{.Foto}}"><br><input type="file" name="file"></td>
+			<th>Upload Foto</th><td>: <input type="file" accept="image/*" name="file" onchange="loadPhoto1(event)"><br><img src="upload/{{.Foto}}" id="image1"></td>
 		</tr>
 	</table>
 	<input type="hidden" name="userid" value="{{.Userid}}">

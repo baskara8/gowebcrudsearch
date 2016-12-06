@@ -12,10 +12,11 @@ import "github.com/kataras/go-sessions"
 import "io"
 import "os"
 import "time"
-import "github.com/xlsx"
+import "github.com/tealeg/xlsx"
 import "database/sql"
 import "math/rand"
 import "strconv"
+import "encoding/json"
 
 type sysuser struct{
 	Userid	 string
@@ -401,6 +402,154 @@ func randoms(min,max int)string{
 	var val   = strconv.Itoa(value)
 	return val
 }
+func users(w http.ResponseWriter,r *http.Request){
+	w.Header().Set("Content-Type","application/json")
+	if r.Method == "POST"{
+	var db = config.Connect()
+	defer db.Close()
+	sql 			:= "SELECT id,nama,email,jekel,foto,password FROM siswa"
+	var col,err 	= db.Query(sql)
+	config.CheckError(err)
+	var each  = sysuser{}
+	var res     = []sysuser{}
+	for col.Next(){
+		var err = col.Scan(&each.Userid,&each.Username,&each.Email,&each.Jekel,&each.Foto,&each.Oldpass)
+		config.CheckError(err)
+		res 			= append(res,each)
+	}
+	var result,error = json.Marshal(res)
+	if error!=nil{
+		http.Error(w,err.Error(),http.StatusInternalServerError)
+		return 
+	}
+	w.Write(result)
+	return
+	}
+	http.Error(w,"",http.StatusBadRequest)
+}
+func getuser(w http.ResponseWriter,r *http.Request){
+	w.Header().Set("Content-Type","application-json")
+	if r.Method =="POST"{
+		var userid =r.FormValue("userid")
+		if userid !=""{
+		var db = config.Connect()
+		defer db.Close()
+		var each  = sysuser{}
+		var res     = []sysuser{}
+		sql 			:= "SELECT id,nama,email,jekel,foto,password FROM siswa WHERE id = ?"
+		var col,err 	= db.Query(sql,userid)
+		if err !=nil{
+		for col.Next(){
+			var err = col.Scan(&each.Userid,&each.Username,&each.Email,&each.Jekel,&each.Foto,&each.Oldpass)
+			config.CheckError(err)
+			res 			= append(res,each)
+		}
+		var result,error = json.Marshal(res)
+		if error!=nil{
+			http.Error(w,err.Error(),http.StatusInternalServerError)
+			return 
+		}
+		w.Write(result)
+		return
+		}else{
+		http.Error(w,"Siswa not found",http.StatusBadRequest)
+		}
+		}else{
+		http.Error(w,"Parameter userid kosong",http.StatusBadRequest)
+		}
+	}
+}
+func insertuser(w http.ResponseWriter,r *http.Request){
+	w.Header().Set("Content-Type","application-json")
+	if r.Method =="POST"{
+		userid 	  := r.FormValue("userid")
+		username  := r.FormValue("username")
+		jekel     := r.FormValue("jekel")
+		email     := r.FormValue("email")
+		password  := r.FormValue("password")
+		hasspass  := hassdata(password)
+		if userid ==""{
+		http.Error(w,"Mohon isi paramater userid",http.StatusBadRequest)
+		}else if username ==""{
+		http.Error(w,"Mohon isi paramater username",http.StatusBadRequest)
+		}else if jekel ==""{
+		http.Error(w,"Mohon isi paramater jekel",http.StatusBadRequest)
+		}else if userid ==""{
+		http.Error(w,"Mohon isi paramater email",http.StatusBadRequest)
+		}else if userid ==""{
+		http.Error(w,"Mohon isi paramater password",http.StatusBadRequest)
+		}else{
+		var db = config.Connect()
+		defer db.Close()
+		var each  = sysuser{}
+		var res     = []sysuser{}
+		var statement,error1 = db.Prepare("INSERT INTO siswa (id,nama,email,jekel,password) VALUES(?,?,?,?,?)")
+		config.CheckError(error1)
+		statement.Exec(strings.ToLower(userid),username,email,jekel,hasspass)
+		sql 			:= "SELECT id,nama,email,jekel,foto FROM siswa WHERE id = ?"
+		var col,err 	= db.Query(sql,userid)
+		config.CheckError(err)
+		for col.Next(){
+			var err = col.Scan(&each.Userid,&each.Username,&each.Email,&each.Jekel,&each.Foto)
+			config.CheckError(err)
+			res 			= append(res,each)
+		}
+		var result,error = json.Marshal(res)
+		if error!=nil{
+			http.Error(w,err.Error(),http.StatusInternalServerError)
+			return 
+		}
+		w.Write(result)
+		return
+		http.Error(w,"Siswa not found",http.StatusBadRequest)
+		}
+	}
+	http.Error(w,"",http.StatusInternalServerError)
+}
+func deleteuser(w http.ResponseWriter,r *http.Request){
+	w.Header().Set("Content-Type","application-json")
+	if r.Method =="POST"{
+		userid 	  := r.FormValue("userid")
+		if userid !=""{
+		var db = config.Connect()
+		defer db.Close()
+		var each  = sysuser{}
+		var res     = []sysuser{}
+		sql := "SELECT foto FROM siswa WHERE id =?"
+		var errs = db.QueryRow(sql,userid).Scan(&each.Foto)
+		if errs!=nil{
+		fmt.Println("Tidak ada foto")
+		}
+		if each.Foto!="" && each.Foto!="default.jpg"{
+		_ = os.Remove("./upload/" + each.Foto)
+		}
+		var statement,error1 = db.Prepare("DELETE FROM siswa WHERE id = ?")
+		config.CheckError(error1)
+		statement.Exec(strings.ToLower(userid))	
+		sql1 			:= "SELECT id,nama,email,jekel,password FROM siswa WHERE id = ?"
+		var col,err 	= db.Query(sql1,userid)
+		if err!=nil{
+		for col.Next(){
+			var err = col.Scan(&each.Userid,&each.Username,&each.Email,&each.Jekel,&each.Oldpass)
+			config.CheckError(err)
+			res 			= append(res,each)
+		}
+		var result,error = json.Marshal(res)
+		if error!=nil{
+			http.Error(w,err.Error(),http.StatusInternalServerError)
+			return 
+		}
+		w.Write(result)
+		return
+		}else{
+		http.Error(w,"Siswa not found",http.StatusBadRequest)
+		}
+		}else{
+		http.Error(w,"Parameter userid kosong atau salah kunci",http.StatusBadRequest)
+		}
+	}
+		
+}
 func route(){
 	http.HandleFunc("/",home)
 	http.HandleFunc("/edit",edit)
@@ -414,8 +563,14 @@ func route(){
 	http.HandleFunc("/download",downloadexcel)
 	http.HandleFunc("/upload",uploadexcel)
 	http.HandleFunc("/doupload",doupload)
+	http.HandleFunc("/users",users)
+	http.HandleFunc("/getuser",getuser)
+	http.HandleFunc("/insertuser",insertuser)
+	http.HandleFunc("/deleteuser",deleteuser)
 	//Makes a folder upload to be public
 	http.Handle("/upload/", http.StripPrefix("/upload/", http.FileServer(http.Dir("upload"))))
+	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
+	http.Handle("/images/", http.StripPrefix("/images/", http.FileServer(http.Dir("images"))))
 }
 func main() {
 	route()

@@ -1,6 +1,12 @@
 {{ define "home" }}
 {{template "header"}}
 {{template "menu"}}
+	 <script>
+ 	var loadPhoto1 = function(event) {
+    var output = document.getElementById('image1');
+    output.src = URL.createObjectURL(event.target.files[0]);
+	};
+ </script>
      <input type="button" value="Ke Halaman User" onClick="location.href='user'">
 	<form method="POST" action="home" enctype="multipart/form-data">
 	<table>
@@ -20,7 +26,7 @@
 			<td>Jekel</td><td>: <input type="radio" name="Jekel" value="L">Laki-laki <input type="radio" name="Jekel" value="P">Perempuan</td>
 		</tr>
 		<tr>
-			<td>Upload Foto</td><td>: <input type="file" name="file"></td>
+			<td>Upload Foto</td><td>:<input type="file" accept="image/*" name="file" onchange="loadPhoto1(event)"><br><img id="image1"></img></td>
 		</tr>
 		<tr>
 			<td><input type="submit" value="Tambah Data" name="submit"></td>
@@ -31,7 +37,7 @@
 	<hr>
 	<button onClick="location.href='download'">Download ke Excel</button>
 	<button onClick="location.href='upload'">Upload dari Excel</button>
-	<table border="1">
+	<table border="1" id="example">
 		<thead>
 		<tr>
 			<th></th>
@@ -50,9 +56,9 @@
 				<td>{{ .Username }}</td>
 				<td>{{ .Email }}</td>
 				<td>{{ .Jekel }}</td>
-				<td>
-				<a href="/edit?id={{ .Userid }}" data-id="{{ .Userid }}">Ubah</a>
-				<a href="/delete?id={{ .Userid }}" data-id="{{ .Userid }}" onClick="return confirm('Hapus Data?')">Hapus</a>
+				<td align="center">
+				<a href="/edit?id={{ .Userid }}" data-id="{{ .Userid }}"><i class="fa fa-pencil-square fa-3x" aria-hidden="true"></i></a>
+				<a href="/delete?id={{ .Userid }}" data-id="{{ .Userid }}" onClick="return confirm('Hapus Data?')"><i class="fa fa-trash fa-3x" aria-hidden="true"></i></a>
 				</td>
 			</tr>
 		 {{ end }}
