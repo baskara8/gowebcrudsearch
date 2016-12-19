@@ -1,7 +1,7 @@
 {{ define "home" }}
 {{template "header"}}
 {{template "menu"}}
-	 <script>
+	<script>
  	var loadPhoto1 = function(event) {
     var output = document.getElementById('image1');
     output.src = URL.createObjectURL(event.target.files[0]);
@@ -35,12 +35,21 @@
 	</table>
 	</form>
 	<hr>
-	<button onClick="location.href='download'">Download ke Excel</button>
-	<button onClick="location.href='upload'">Upload dari Excel</button>
-	<table border="1" id="example">
+	<button onClick="location.href='download'" class="pointer"><i class="fa fa-download"> Download ke Excel</i></button>
+	<button onClick="location.href='upload'" class="pointer"><i class="fa fa-upload"> Upload dari Excel</i></button>
+	<br>
+	<br>
+	<form method="POST" action="centang">
+	<select name="pilihan">
+		<option>:data yang dicentang</option>
+		<option id="hapus">hapus</option>
+	</select>
+	<input type="submit" value="Proses" onclick="return confirm('Hapus data yang terpilih?')">
+	<table border="1" id="tabledt">
 		<thead>
 		<tr>
-			<th></th>
+			<th><input type="checkbox" id="checkAll"></th>
+			<th>Ava</th>
 			<th>ID</th>
 			<th>Nama</th>
 			<th>Email</th>
@@ -51,6 +60,7 @@
 		<tbody>
 		 {{ range . }}
 			<tr>
+				<td><input type="checkbox" name="data" value="{{ .Userid}}" class="checkAll"></td>
 				<td><img src="/upload/{{ .Foto }}" width="75" height="60"></td>
 				<td>{{ .Userid }}</td>
 				<td>{{ .Username }}</td>
@@ -64,5 +74,6 @@
 		 {{ end }}
 		</tbody>
 	</table>
+	</form>
 {{template "footer"}}
 {{ end }}}

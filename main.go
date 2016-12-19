@@ -9,6 +9,7 @@ import "flag"
 import "strings"
 import "crypto/sha1"
 import "github.com/kataras/go-sessions"
+import "github.com/fatih/color"
 import "io"
 import "os"
 import "time"
@@ -550,6 +551,35 @@ func deleteuser(w http.ResponseWriter,r *http.Request){
 	}
 		
 }
+func centang(w http.ResponseWriter, r *http.Request){
+	if r.Method=="POST"{
+	pilihan := r.FormValue("pilihan")
+	if pilihan=="hapus"{
+	r.ParseForm()
+	data := r.Form["data"]
+	for _,d := range data{
+		var db = config.Connect()
+		defer db.Close()
+		var each  = sysuser{}
+		sql := "SELECT foto FROM siswa WHERE id =?"
+		var errs = db.QueryRow(sql,d).Scan(&each.Foto)
+		if errs!=nil{
+		fmt.Println("Tidak ada foto")
+		}
+		if each.Foto!="" && each.Foto!="default.jpg"{
+		_ = os.Remove("./upload/" + each.Foto)
+		}
+		var statement,error1 = db.Prepare("DELETE FROM siswa WHERE id = ?")
+		config.CheckError(error1)
+		statement.Exec(strings.ToLower(d))	
+	}
+		http.Redirect(w,r,"home",301)
+	}else{
+		http.Redirect(w,r,"home?"+pilihan,301)
+	}
+	}
+
+}
 func route(){
 	http.HandleFunc("/",home)
 	http.HandleFunc("/edit",edit)
@@ -567,6 +597,7 @@ func route(){
 	http.HandleFunc("/getuser",getuser)
 	http.HandleFunc("/insertuser",insertuser)
 	http.HandleFunc("/deleteuser",deleteuser)
+	http.HandleFunc("/centang",centang)
 	//Makes a folder upload to be public
 	http.Handle("/upload/", http.StripPrefix("/upload/", http.FileServer(http.Dir("upload"))))
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
@@ -577,6 +608,7 @@ func main() {
 	var port = flag.String("port","85","isi port")
 	flag.Parse()
 	var timenow = time.Now()
-	fmt.Printf("%s %s %s",timenow,"Berjalan di port",*port)
+	c := color.New(color.FgGreen).Add(color.Underline)
+	c.Printf("%s %s %s",timenow,"Berjalan di port",*port)
 	http.ListenAndServe(":"+*port,nil)
 }
